@@ -69,21 +69,34 @@ describe UsersController do
 
       let(:updated_name) { 'bar' }
 
+      # do macros have access to vars that aren't explicitly passed in??
       it 'can update their own profile' do
-        process :update, params: { id: user.id, user: attributes_for(:user, name: updated_name) }
+        update_user(user)
         user.reload
         expect(user.name).to eq(updated_name)
       end
 
-      it 'cannot update another profile'
+      it 'cannot update another profile' do
+        update_user(user_2)
+        expect(response).to redirect_to root_url
+      end
 
     end
 
     context 'delete#destroy' do
 
-      it 'can update their own profile'
+      it 'can delete their own profile' do
+        expect{
+          process :destroy, params: { id: user.id }
+        }.to change(User, :count).by(-1)
+      end
 
-      it 'cannot update another profile'
+      it 'cannot delete another profile' do
+        user_2
+        expect{
+          process :destroy, params: { id: user_2.id }
+        }.to change(User, :count).by(0)
+      end
 
     end
 
