@@ -1,7 +1,8 @@
 module CreateUserMacros
 
   def submit_user(input)
-    post users_url, params: { user: input }
+    process :create, params: { user: input }
+    # post users_url, params: { user: input }
   end
 
   def log_in(user)

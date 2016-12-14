@@ -10,7 +10,7 @@ require 'rails_helper'
 # providing params and verb/controller action
 # examine returned response
 
-describe UsersController, type: :request do
+describe UsersController do
 
   context 'post#create' do
 
@@ -62,10 +62,7 @@ describe UsersController, type: :request do
     let(:user_2) { create(:user, email: 'foo2@bar.com') }
 
     before do
-      user
-      # log_in(user)
-      binding.pry
-      session[:user_id] = user.id
+      log_in(user)
     end
 
     context 'patch#update' do
@@ -73,7 +70,7 @@ describe UsersController, type: :request do
       let(:updated_name) { 'bar' }
 
       it 'can update their own profile' do
-        patch user_url, params: { id: user.id, user: attributes_for(:user, name: updated_name) }
+        process :update, params: { id: user.id, user: attributes_for(:user, name: updated_name) }
         user.reload
         expect(user.name).to eq(updated_name)
       end
