@@ -21,8 +21,6 @@ describe UsersController do
       it 'creates a new user' do
         expect{
           submit_user(correct_input)
-          # process :create Rails 4
-          # post users_url Rails 5
         }.to change(User, :count).by(1)
       end
 
@@ -46,11 +44,7 @@ describe UsersController do
         expect { submit_user(incorrect_input) }.to change(User, :count).by(0)
       end
 
-      # HOW TO CHECK FLASH ERROR?
-      # it 'sets a flash error' do
-      #   submit_user(incorrect_input)
-      #   expect(errors.messages).to be_present
-      # end
+      # check there's no redirect
 
     end
 
@@ -69,15 +63,14 @@ describe UsersController do
 
       let(:updated_name) { 'bar' }
 
-      # do macros have access to vars that aren't explicitly passed in??
       it 'can update their own profile' do
-        update_user(user)
+        update_user(user, updated_name)
         user.reload
         expect(user.name).to eq(updated_name)
       end
 
       it 'cannot update another profile' do
-        update_user(user_2)
+        update_user(user_2, updated_name)
         expect(response).to redirect_to root_url
       end
 
