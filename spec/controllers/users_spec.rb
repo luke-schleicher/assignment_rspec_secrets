@@ -20,7 +20,6 @@ describe UsersController, type: :request do
 
       it 'creates a new user' do
         expect{
-
           submit_user(correct_input)
           # process :create Rails 4
           # post users_url Rails 5
@@ -43,31 +42,53 @@ describe UsersController, type: :request do
 
       let (:incorrect_input) { attributes_for(:user, name: '') }
 
-      it "doesn't create a user"
-        # count
+      it "doesn't create a user" do
+        expect { submit_user(incorrect_input) }.to change(User, :count).by(0)
+      end
 
-      it 'sets a flash error'
-
-      # it 'rerenders the page'
-      # expect(response).to render_template :new
+      # HOW TO CHECK FLASH ERROR?
+      # it 'sets a flash error' do
+      #   submit_user(incorrect_input)
+      #   expect(errors.messages).to be_present
+      # end
 
     end
 
   end
 
-  context 'patch#update' do
+  context 'User authorization' do
 
-    it 'can update their own profile'
+    let(:user) { create(:user) }
+    let(:user_2) { create(:user, email: 'foo2@bar.com') }
 
-    it 'cannot update another profile'
+    before do
+      user
+      # log_in(user)
+      binding.pry
+      session[:user_id] = user.id
+    end
 
-  end
+    context 'patch#update' do
 
-  context 'delete#destroy' do
+      let(:updated_name) { 'bar' }
 
-    it 'can update their own profile'
+      it 'can update their own profile' do
+        patch user_url, params: { id: user.id, user: attributes_for(:user, name: updated_name) }
+        user.reload
+        expect(user.name).to eq(updated_name)
+      end
 
-    it 'cannot update another profile'
+      it 'cannot update another profile'
+
+    end
+
+    context 'delete#destroy' do
+
+      it 'can update their own profile'
+
+      it 'cannot update another profile'
+
+    end
 
   end
 
